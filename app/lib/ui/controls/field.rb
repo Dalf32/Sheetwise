@@ -3,7 +3,7 @@
 # Author::  Kyle Mullins
 
 require 'tk'
-require_relative 'widget/all_widgets'
+require_relative 'widgets/all_widgets'
 
 class Field
 	HEADER = :header

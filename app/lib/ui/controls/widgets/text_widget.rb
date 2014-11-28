@@ -13,14 +13,14 @@ class TextWidget
 
 		if options_hash[MULTILINE_KEY]
 			@widget = Tk::Tile::Text.new(parent)
-			#TODO: configure multiline widget
+			#TODO: configure multiline widgets
 		else
 			@widget = Tk::Tile::Entry.new(parent)
-			#TODO: configure single line widget
+			#TODO: configure single line widgets
 		end
 
 		if options_hash[READONLY_KEY]
-			#TODO: set widget to readonly
+			#TODO: set widgets to readonly
 		end
 	end
 
