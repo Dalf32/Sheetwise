@@ -19,7 +19,6 @@ class Field
 		@initial_value = initial_value
 		@options = options_hash
 		@widget = nil
-		@validator = nil
 	end
 
 	def show_control(parent)
@@ -43,18 +42,6 @@ class Field
 		end
 
 		@widget.value = @initial_value
-	end
-
-	def set_validator(validator)
-		@validator = validator
-	end
-
-	def has_validator?
-		!@validator.nil?
-	end
-
-	def validate
-
 	end
 
 	def dup

@@ -36,8 +36,18 @@ class SheetService
 		@calculators[@active_sheet]<<calculator
 	end
 
-	def get_calculators
+	def calculators
 		@calculators[@active_sheet]
+	end
+
+	def get_dependent_calculators(field_name)
+		calculators.collect do |calculator|
+			calculator.field_dependencies.include?(field_name)
+		end
+	end
+
+	def has_dependent_calculators?(field_name)
+		!get_dependent_calculators(field_name).empty?
 	end
 
 	private

@@ -30,8 +30,20 @@ class FieldService
 		@fields[qualify_field_name(field_name)]
 	end
 
-	def validate(field_name)
+	def add_validator(validator)
+		if has_validator?(validator.target_field)
+			fail "Field with name: #{validator.target_field} already has validator; a field may have at most one validator."
+		end
 
+		@validators[validator.target_field] = validator
+	end
+
+	def get_validator(field_name)
+		@validators[qualify_field_name(field_name)]
+	end
+
+	def has_validator?(field_name)
+		@validators.has_key?(qualify_field_name(field_name))
 	end
 
 	private
@@ -40,6 +52,7 @@ class FieldService
 
 	def initialize
 		@fields = {}
+		@validators = {}
 	end
 
 	def qualify_field_name(field_name, sheet_name = SheetService.instance.active_sheet)
