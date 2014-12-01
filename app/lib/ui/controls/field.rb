@@ -19,9 +19,13 @@ class Field
 		@initial_value = initial_value
 		@options = options_hash
 		@widget = nil
+		@validated = true
 	end
 
-	def show_control(parent)
+	def show_control(parent, row = nil, col = nil)
+		@options[Widget::GRID_ROW_KEY] = row unless row.nil?
+		@options[Widget::GRID_COL_KEY] = col unless col.nil?
+
 		case @field_type
 			when HEADER
 				@options[LabelWidget::STYLE_KEY] = LabelWidget::HEADING_STYLE
@@ -42,6 +46,15 @@ class Field
 		end
 
 		@widget.value = @initial_value
+	end
+
+	def mark_validated(was_validated)
+		#TODO: perhaps change @validated to :passed, :failed, :awaiting_validation
+		@validated = was_validated
+	end
+
+	def validated?
+		@validated and not @widget.dirty?
 	end
 
 	def dup

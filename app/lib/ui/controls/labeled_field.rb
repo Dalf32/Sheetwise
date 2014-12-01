@@ -12,7 +12,7 @@ class LabeledField < Field
 		@label_text = label_text
 	end
 
-	def show_control(parent)
+	def show_control(parent, row = nil, col = nil)
 		container = Tk::Tile::Frame.new(parent)
 
 		TkGrid.rowconfigure(container, 0, weight: 1)

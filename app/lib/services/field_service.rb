@@ -23,11 +23,19 @@ class FieldService
 	end
 
 	def remove_fields_for_sheet(sheet_name)
-		@fields.delete_if{ |key, value| key.end_with?(qualify_field_name('', sheet_name)) }
+		@fields.delete_if{ |name, field| name.end_with?(qualify_field_name('', sheet_name)) }
 	end
 
 	def get_field(field_name)
 		@fields[qualify_field_name(field_name)]
+	end
+
+	def get_all_fields
+		@fields.collect{ |name, field| name.end_with?(qualify_field_name('')) }
+	end
+
+	def get_unvalidated_fields
+		get_all_fields.collect{ |name, field| !field.validated? }
 	end
 
 	def add_validator(validator)

@@ -3,8 +3,11 @@
 # Author::  Kyle Mullins
 
 require 'tk'
+require_relative 'all_widgets'
 
 class LabelWidget
+	include Widget
+
 	STYLE_KEY = :style
 	HEADING_STYLE = :heading
 	NORMAL_STYLE = :normal
@@ -30,5 +33,9 @@ class LabelWidget
 	def value=(new_value)
 		@widget.value = new_value.to_s
 		@is_dirty = true
+	end
+
+	def dirty?
+		@is_dirty
 	end
 end

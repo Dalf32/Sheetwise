@@ -10,4 +10,10 @@ class UserCode
 	def run
 
 	end
+
+	protected
+
+	def get_run_params
+		{}
+	end
 end

@@ -18,7 +18,7 @@ class FieldTable
 		@columns<<{ column_name => field }
 	end
 
-	def show_control(parent)
+	def show_control(parent, row = nil, col = nil)
 		@collection_frame = Tk::Tile::Frame.new(parent)
 		@next_row = 0
 

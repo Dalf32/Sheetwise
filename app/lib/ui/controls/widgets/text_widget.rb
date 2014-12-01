@@ -3,8 +3,11 @@
 # Author::  Kyle Mullins
 
 require 'tk'
+require_relative 'all_widgets'
 
 class TextWidget
+	include Widget
+
 	MULTILINE_KEY = :is_multiline
 	READONLY_KEY = :is_readonly
 
@@ -31,5 +34,9 @@ class TextWidget
 	def value=(new_value)
 		@widget.value = new_value.to_s
 		@is_dirty = true
+	end
+
+	def dirty?
+		@is_dirty
 	end
 end
