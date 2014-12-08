@@ -10,7 +10,9 @@ class Field
 	LABEL = :label
 	TEXT = :text
 	MULTILINE = :multiline
+	NUMERIC = :numeric
 	LISTBOX = :listbox
+	CHECKBOX = :checkbox
 
 	attr_reader :field_type, :widget
 
@@ -39,8 +41,14 @@ class Field
 			when MULTILINE
 				@options[TextWidget::MULTILINE_KEY] = true
 				@widget = TextWidget.new(parent, @options)
+			when NUMERIC
+				@widget = NumericWidget.new(parent, @options)
 			when LISTBOX
-				#TODO: ListboxWidget
+				choices = @options[ListboxWidget::CHOICES_KEY]
+				@widget = ListboxWidget.new(parent, choices, @options)
+			when CHECKBOX
+				text = @options[CheckboxWidget::TEXT_KEY]
+				@widget = CheckboxWidget.new(parent, text, @options)
 			else
 				fail "Invalid field type: #{@field_type}"
 		end

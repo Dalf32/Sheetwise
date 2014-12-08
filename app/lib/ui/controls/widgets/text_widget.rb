@@ -3,7 +3,7 @@
 # Author::  Kyle Mullins
 
 require 'tk'
-require_relative 'all_widgets'
+require_relative 'widget'
 
 class TextWidget
 	include Widget
@@ -12,7 +12,7 @@ class TextWidget
 	READONLY_KEY = :is_readonly
 
 	def initialize(parent, options_hash)
-		@is_dirty = false
+		super()
 
 		if options_hash[MULTILINE_KEY]
 			@widget = Tk::Tile::Text.new(parent)
@@ -34,9 +34,5 @@ class TextWidget
 	def value=(new_value)
 		@widget.value = new_value.to_s
 		@is_dirty = true
-	end
-
-	def dirty?
-		@is_dirty
 	end
 end

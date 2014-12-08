@@ -3,7 +3,7 @@
 # Author::  Kyle Mullins
 
 require 'tk'
-require_relative 'all_widgets'
+require_relative 'widget'
 
 class LabelWidget
 	include Widget
@@ -13,7 +13,7 @@ class LabelWidget
 	NORMAL_STYLE = :normal
 
 	def initialize(parent, options_hash)
-		@is_dirty = false
+		super()
 		@widget = Tk::Tile::Label.new(parent)
 
 		case options_hash[STYLE_KEY]
@@ -32,10 +32,5 @@ class LabelWidget
 
 	def value=(new_value)
 		@widget.value = new_value.to_s
-		@is_dirty = true
-	end
-
-	def dirty?
-		@is_dirty
 	end
 end
