@@ -8,6 +8,10 @@ require_relative 'sheet_service'
 class FieldService
 	include Singleton
 
+	def create_field(field_def_hash)
+
+	end
+
 	def add_field(field_name, field)
 		qualified_name = qualify_field_name(field_name)
 
@@ -22,8 +26,8 @@ class FieldService
 		@fields.delete(qualify_field_name(field_name))
 	end
 
-	def remove_fields_for_sheet(sheet_name)
-		@fields.delete_if{ |name, field| name.end_with?(qualify_field_name('', sheet_name)) }
+	def remove_fields_for_sheet(sheet_id)
+		@fields.delete_if{ |name, field| name.end_with?(qualify_field_name('', sheet_id)) }
 	end
 
 	def get_field(field_name)
@@ -39,11 +43,11 @@ class FieldService
 	end
 
 	def add_validator(validator)
-		if has_validator?(validator.target_field)
-			fail "Field with name: #{validator.target_field} already has validator; a field may have at most one validator."
-		end
-
-		@validators[validator.target_field] = validator
+		# if has_validator?(validator.target_field)
+		# 	fail "Field with name: #{validator.target_field} already has validator; a field may have at most one validator."
+		# end
+		#
+		# @validators[validator.target_field] = validator
 	end
 
 	def get_validator(field_name)
@@ -63,7 +67,7 @@ class FieldService
 		@validators = {}
 	end
 
-	def qualify_field_name(field_name, sheet_name = SheetService.instance.active_sheet)
-		field_name + NAME_SEPARATOR + sheet_name
+	def qualify_field_name(field_name, sheet_id = SheetService.instance.active_sheet_id)
+		field_name + NAME_SEPARATOR + sheet_id
 	end
 end

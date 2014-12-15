@@ -3,51 +3,51 @@
 # Author::  Kyle Mullins
 
 require 'singleton'
+require_relative 'field_service'
+require_relative 'user_code_service'
+require_relative '../ui/sheet'
+require_relative '../ui/controls/sheet_section'
 
 class SheetService
 	include Singleton
 
-	attr_reader :active_sheet
+	attr_reader :active_sheet, :active_sheet_id
 
-	def add_sheet(sheet_name, sheet)
-		if @sheets.has_key?(sheet_name)
-			fail "Sheet with name: #{sheet_name} already exists; all sheets must have a unique name."
-		end
+	def create_sheet(sheet_def_hash)
+		#TODO: Extract hash keys to constants file
+		sheet_name = sheet_def_hash['name']
+		sheet = Sheet.new(SecureRandom.uuid, sheet_name)
 
-		@sheets[sheet_name] = sheet
-		@calculators[sheet_name] = []
+		sheet.set_controls(create_controls(sheet_def_hash))
+
+		add_sheet(sheet.id, sheet)
+		self.active_sheet = sheet
+	end
+
+	def add_sheet(sheet_id, sheet)
+		@sheets[sheet_id] = sheet
 
 		if @active_sheet.nil?
-			self.active_sheet = sheet_name
+			self.active_sheet = sheet_id
 		end
 	end
 
-	def get_sheet(sheet_name)
-		@sheets[sheet_name]
+	def get_sheet(sheet_id)
+		@sheets[sheet_id]
 	end
 
-	def active_sheet=(sheet_name)
-		if @sheets.has_key?(sheet_name)
-			@active_sheet = sheet_name
+	def active_sheet=(sheet)
+		if @sheets.has_key?(sheet.id)
+			@active_sheet = sheet
+			@active_sheet_id = sheet.id
 		end
 	end
 
-	def add_calculator(calculator)
-		@calculators[@active_sheet]<<calculator
-	end
-
-	def calculators
-		@calculators[@active_sheet]
-	end
-
-	def get_dependent_calculators(field_name)
-		calculators.collect do |calculator|
-			calculator.field_dependencies.include?(field_name)
+	def active_sheet_id=(sheet_id)
+		if @sheets.has_key?(sheet_id)
+			@active_sheet_id = sheet_id
+			@active_sheet = @sheets[sheet_id]
 		end
-	end
-
-	def has_dependent_calculators?(field_name)
-		!get_dependent_calculators(field_name).empty?
 	end
 
 	private
@@ -55,6 +55,15 @@ class SheetService
 	def initialize
 		@sheets = {}
 		@active_sheet = nil
-		@calculators = {}
+	end
+
+	def create_controls(sheet_def_hash)
+		root_section = SheetSection.new({})
+
+		sheet_def_hash['controls'].each do |control_hash|
+
+		end
+
+		root_section
 	end
 end
