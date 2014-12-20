@@ -11,6 +11,7 @@ class Notification
 
 	def add_error(message, cause = nil)
 		@errors<<Error.new(message, cause)
+		self
 	end
 
 	def has_errors?
@@ -22,6 +23,6 @@ class Notification
 	end
 
 	def format_messages
-		@errors.map{ |error| "#{error.message}, #{error.cause}" }.join('\n')
+		@errors.map{ |error| "#{error.message}"<<(error.cause.nil? ? '' : ", #{error.cause}") }.join('\n')
 	end
 end

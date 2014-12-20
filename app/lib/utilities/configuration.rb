@@ -5,8 +5,9 @@
 require_relative 'extensions/hash_extensions'
 
 class Configuration
-	def initialize(config_hash = {})
+	def initialize(config_hash = {}, fallback_config = {})
 		@config = config_hash.symbolize_keys
+		@fallback_config = fallback_config.symbolize_keys
 	end
 
 	def set(key, value)
@@ -14,11 +15,13 @@ class Configuration
 	end
 
 	def get(key)
-		@config.fetch(key){ fail "Key not found in configuration: #{key}" }
+		@config.fetch(key) do
+			@fallback_config.fetch(key){ fail "Key not found in configuration: #{key}" }
+		end
 	end
 
 	def has_key?(key)
-		@config.has_key?(key)
+		@config.has_key?(key) or @fallback_config.has_key?(key)
 	end
 
 	def to_h
@@ -31,7 +34,7 @@ class Configuration
 		elsif args.size == 1
 			set(config_key, args.first)
 		else
-			fail ArgumentError, "wrong number of arguments(#{args.size} for 1"
+			super
 		end
 	end
 
