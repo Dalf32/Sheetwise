@@ -27,7 +27,7 @@ class FieldService
 	end
 
 	def remove_fields_for_sheet(sheet_id)
-		@fields.delete_if{ |name, field| name.end_with?(qualify_field_name('', sheet_id)) }
+		@fields.delete_if do |name, field| name.end_with?(qualify_field_name('', sheet_id)) end
 	end
 
 	def get_field(field_name)

@@ -13,8 +13,8 @@ class UserCodeService
 		validators = create_validators(user_code_def_hash)
 		calculators = create_calculators(user_code_def_hash)
 
-		validators.each{ |validator| add_validator(validator) }
-		calculators.each{ |calculator| add_calculator(calculator) }
+		validators.each do |validator| add_validator(validator) end
+		calculators.each do |calculator| add_calculator(calculator) end
 	end
 
 	def validate_field(field_name)
@@ -31,7 +31,7 @@ class UserCodeService
 		if has_dependent_calculators?(field_name)
 			calculators = get_dependent_calculators(field_name)
 
-			calculators.each{ |calculator| calculator.run }
+			calculators.each do |calculator| calculator.run end
 			#TODO: field.mark_ok()
 		end
 	end
@@ -63,8 +63,8 @@ class UserCodeService
 	private
 
 	def initialize
-		@calculators = Hash.new{ |hash, key| hash[key] = [] }
-		@validators = Hash.new{ |hash, key| hash[key] = [] }
+		@calculators = Hash.new do |hash, key| hash[key] = [] end
+		@validators = Hash.new do |hash, key| hash[key] = [] end
 	end
 
 	def create_validators(user_code_def_hash)

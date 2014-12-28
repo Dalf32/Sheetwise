@@ -19,7 +19,7 @@ class Notification
 	end
 
 	def each
-		@errors.each{ |error| yield(error) }
+		@errors.each do |error| yield(error) end
 	end
 
 	def format_messages

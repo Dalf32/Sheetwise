@@ -4,7 +4,7 @@
 
 class Hash
 	def symbolize_keys
-		inject({}) do |result, (key, value)|
+		inject({}){ |result, (key, value)|
 			new_key = case key
 				          when String then key.to_sym
 				          else key
@@ -17,6 +17,6 @@ class Hash
 
 			result[new_key] = new_value
 			result
-		end
+		}
 	end
 end

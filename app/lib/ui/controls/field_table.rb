@@ -22,7 +22,9 @@ class FieldTable
 		@collection_frame = Tk::Tile::Frame.new(parent)
 		@next_row = 0
 
-		@columns.size.times{ |n| TkGrid.columnconfigure(@collection_frame, n, weight: 1) }
+		@columns.size.times do |n|
+			TkGrid.columnconfigure(@collection_frame, n, weight: 1)
+		end
 
 		if @options[HEADERS_KEY] == SHOW_HEADERS
 			TkGrid.rowconfigure(@collection_frame, 0, weight: 1)

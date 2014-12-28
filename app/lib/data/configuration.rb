@@ -2,7 +2,7 @@
 #
 # Author::  Kyle Mullins
 
-require_relative 'extensions/hash_extensions'
+require_relative '../utilities/extensions/hash_extensions'
 
 class Configuration
 	def initialize(config_hash = {}, fallback_config = {})
@@ -16,7 +16,7 @@ class Configuration
 
 	def get(key)
 		@config.fetch(key) do
-			@fallback_config.fetch(key){ fail "Key not found in configuration: #{key}" }
+			@fallback_config.fetch(key) do fail "Key not found in configuration: #{key}" end
 		end
 	end
 

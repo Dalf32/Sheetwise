@@ -17,12 +17,8 @@ class Calculator < UserCode
 	protected
 
 	def get_run_params
-		fields = {}
-
-		@field_dependencies.each do |field_name|
-			fields[field_name] = FieldService.instance.get_field(field_name)
-		end
-
-		fields
+		@field_dependencies.inject({}){|params, field_name|
+			params[field_name] = FieldService.instance.get_field(field_name)
+		}
 	end
 end

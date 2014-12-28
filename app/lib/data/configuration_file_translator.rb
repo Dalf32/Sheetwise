@@ -3,7 +3,7 @@
 # Author::  Kyle Mullins
 
 require 'json'
-require_relative '../utilities/configuration'
+require_relative 'configuration'
 require_relative '../utilities/notification'
 
 class ConfigurationFileTranslator

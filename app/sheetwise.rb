@@ -5,7 +5,7 @@
 require 'optparse'
 require_relative 'lib/ui/sheetwise_window'
 require_relative 'lib/data/configuration_file_translator'
-require_relative 'lib/utilities/default_configuration'
+require_relative 'lib/data/default_configuration'
 
 #MAIN
 
@@ -29,7 +29,7 @@ OptionParser.new do |opt|
 end.parse!
 
 config_translator = ConfigurationFileTranslator.new(config_file)
-config = config_translator.read_config_with_default(DEFAULT_CONFIG){|notif| $stderr<<notif.format_messages<<"\n" }
+config = config_translator.read_config_with_default(DEFAULT_CONFIG) do |notif| $stderr<<notif.format_messages<<"\n" end
 
 abort if config.nil?
 
