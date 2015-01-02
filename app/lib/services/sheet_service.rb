@@ -5,6 +5,7 @@
 require 'singleton'
 require_relative 'field_service'
 require_relative 'user_code_service'
+require_relative '../data/definition_constants'
 require_relative '../ui/sheet'
 require_relative '../ui/controls/sheet_section'
 
@@ -14,8 +15,7 @@ class SheetService
 	attr_reader :active_sheet, :active_sheet_id
 
 	def create_sheet(sheet_def_hash)
-		#TODO: Extract hash keys to constants file
-		sheet_name = sheet_def_hash['name']
+		sheet_name = sheet_def_hash[DefinitionConstants::NAME]
 		sheet = Sheet.new(SecureRandom.uuid, sheet_name)
 
 		sheet.set_controls(create_controls(sheet_def_hash))
@@ -60,7 +60,7 @@ class SheetService
 	def create_controls(sheet_def_hash)
 		root_section = SheetSection.new({})
 
-		sheet_def_hash['controls'].each do |control_hash|
+		sheet_def_hash[DefinitionConstants::CONTROL_LIST].each do |control_hash|
 
 		end
 

@@ -5,6 +5,7 @@
 require 'singleton'
 require_relative 'field_service'
 require_relative 'sheet_service'
+require_relative '../data/definition_constants'
 
 class UserCodeService
 	include Singleton
@@ -68,7 +69,7 @@ class UserCodeService
 	end
 
 	def create_validators(user_code_def_hash)
-		user_code_def_hash['validators'].each do |validator_hash|
+		user_code_def_hash[DefinitionConstants::VALIDATOR_LIST].each do |validator_hash|
 
 		end
 	end
@@ -76,7 +77,7 @@ class UserCodeService
 	def create_calculators(user_code_def_hash)
 		calculators = []
 
-		user_code_def_hash['calculators'].each do |calculator_hash|
+		user_code_def_hash[DefinitionConstants::CALCULATOR_LIST].each do |calculator_hash|
 
 		end
 
