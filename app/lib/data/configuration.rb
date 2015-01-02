@@ -6,8 +6,8 @@ require_relative '../utilities/extensions/hash_extensions'
 
 class Configuration
 	def initialize(config_hash = {}, fallback_config = {})
-		@config = config_hash.symbolize_keys
-		@fallback_config = fallback_config.symbolize_keys
+		@config = normalize_hash(config_hash)
+		@fallback_config = normalize_hash(fallback_config)
 	end
 
 	def set(key, value)
@@ -39,4 +39,10 @@ class Configuration
 	end
 
 	alias_method :to_hash, :to_h
+
+	private
+
+	def normalize_hash(hash)
+		hash.transform_keys(&Transforms::Normalize)
+	end
 end
