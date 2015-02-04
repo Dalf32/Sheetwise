@@ -40,4 +40,4 @@ end
 window = SheetwiseWindow.new(config.window_width, config.window_height)
 window.show
 
-config_translator.write_config(config)
+config_translator.write_config(config) do |notif| $stderr<<notif.format_messages<<"\n" end

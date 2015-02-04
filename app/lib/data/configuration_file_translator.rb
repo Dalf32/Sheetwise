@@ -32,6 +32,11 @@ class ConfigurationFileTranslator
 	end
 
 	def write_config(configuration)
+		unless File.readable?(@config_file) && File.writable?(@config_file)
+			yield Notification.new.add_error("Cannot access file #{@config_file}, Configuration not saved.") if block_given?
+			return
+		end
+
 		config_text = JSON.pretty_generate(configuration.to_hash)
 		File.open(@config_file, 'w+').write(config_text)
 	end

@@ -33,7 +33,7 @@ class SheetwiseWindow
 		file_menu.add(:command, label: 'Open Sheet...', command: proc{ open_sheet })
 		file_menu.add(:command, label: 'Save', command: proc{ save })
 		file_menu.add(:command, label: 'Save As...', command: proc{ save_as })
-		file_menu.add(:command, label: 'Exit', command: proc{ exit })
+		file_menu.add(:command, label: 'Exit', command: proc{ exit(root) })
 
 		settings_menu = TkMenu.new(menubar)
 		menubar.add(:cascade, menu: settings_menu, label: 'Settings')
@@ -71,8 +71,8 @@ class SheetwiseWindow
 		puts 'save_as'
 	end
 
-	def exit
-		puts 'exit'
+	def exit(window_root)
+		window_root.destroy
 	end
 
 	def external_storage_settings
