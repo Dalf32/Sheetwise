@@ -15,10 +15,16 @@ class TextWidget
 		super()
 
 		if options_hash[MULTILINE_KEY]
-			@widget = Tk::Tile::Text.new(parent)
+			@widget = TkText.new(parent) do
+				grid row: options_hash[GRID_ROW_KEY], column: options_hash[GRID_COL_KEY]
+				width 20
+				height 5
+			end
 			#TODO: configure multiline widgets
 		else
-			@widget = Tk::Tile::Entry.new(parent)
+			@widget = Tk::Tile::Entry.new(parent) do
+				grid row: options_hash[GRID_ROW_KEY], column: options_hash[GRID_COL_KEY]
+			end
 			#TODO: configure single line widgets
 		end
 

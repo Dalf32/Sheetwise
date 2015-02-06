@@ -20,7 +20,11 @@ class Sheet
 	end
 
 	def display_sheet(parent)
-		sheet_frame = Tk::Tile::Frame.new(parent)
-		@root_sheet_section.show_control(parent)
+		sheet_frame = Tk::Tile::Frame.new(parent) do
+			pack side: 'left', padx: 0, pady: 0, fill: 'both', expand: 1
+			padding '3 3 12 12'
+		end
+
+		@root_sheet_section.show_control(sheet_frame)
 	end
 end

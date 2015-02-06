@@ -13,19 +13,18 @@ class LabeledField < Field
 	end
 
 	def show_control(parent, row = nil, col = nil)
-		container = Tk::Tile::Frame.new(parent)
+		container = Tk::Tile::Frame.new(parent) do
+			grid row: row, column: col
+		end
 
 		TkGrid.rowconfigure(container, 0, weight: 1)
 		TkGrid.columnconfigure(container, 0, weight: 1)
 		TkGrid.columnconfigure(container, 1, weight: 1)
 
-		@label = Tk::Tile::Label.new(parent) do
-			text @label_text.to_s
-			grid row: 0, column: 0
-		end
+		label_field = Field.new(Field::LABEL, @label_text.to_s, {})
+		label_field.show_control(container, 0, 0)
 
-		super(container)
-		@widget.grid(row: 0, column: 1)
+		super(container, 0, 1)
 	end
 
 	def dup
