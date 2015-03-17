@@ -3,6 +3,7 @@
 # Author::  Kyle Mullins
 
 require 'singleton'
+require 'securerandom'
 require_relative 'field_service'
 require_relative 'user_code_service'
 require_relative '../data/definition_constants'
@@ -28,7 +29,7 @@ class SheetService
 		@sheets[sheet_id] = sheet
 
 		if @active_sheet.nil?
-			self.active_sheet = sheet_id
+			self.active_sheet_id = sheet_id
 		end
 	end
 

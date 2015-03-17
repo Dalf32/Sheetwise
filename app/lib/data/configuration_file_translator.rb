@@ -32,7 +32,7 @@ class ConfigurationFileTranslator
 	end
 
 	def write_config(configuration)
-		unless File.readable?(@config_file) && File.writable?(@config_file)
+		unless File.writable?(@config_file)
 			yield Notification.new.add_error("Cannot access file #{@config_file}, Configuration not saved.") if block_given?
 			return
 		end

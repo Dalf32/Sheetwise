@@ -35,6 +35,7 @@ module Transforms
 	Snakeify = -> key {
 		case key
 			when String then key.downcase.gsub(' ', '_')
+			when Symbol then key.to_s.downcase.gsub(' ', '_')
 			else key
 		end
 	}

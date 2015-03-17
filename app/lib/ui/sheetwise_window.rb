@@ -6,6 +6,9 @@ require 'tk'
 
 require_relative 'sheet'
 require_relative 'controls/labeled_field'
+require_relative '../services/sheet_service'
+require_relative '../data/definition_file_translator'
+require_relative '../data/local_source'
 
 class SheetwiseWindow
 	def initialize(win_width, win_height)
@@ -60,18 +63,32 @@ class SheetwiseWindow
 		@tabs.add(new_tab, text: 'New Tab')
 		@tabs.select(new_tab)
 
-		sheet = Sheet.new(1, 'New Sheet')
-		sheet_section = SheetSection.new({})
+		translator = DefinitionFileTranslator.new
+		translator.add_source(LocalSource.new(Dir.new('/home/kyle/documents/sheet_definitions')))
 
-		sheet_section.add_control(0, 0, Field.new(Field::LABEL, 'Test Section', {}))
-		sheet_section.add_control(1, 0, Field.new(Field::TEXT, 'Test text', {}))
-		sheet_section.add_control(2, 0, LabeledField.new(Field::TEXT, 'Name', '', {}))
+		def_hash = translator.get_definition_hash('test')
 
-		sheet_section.add_control(0, 1, Field.new(Field::CHECKBOX, CheckboxWidget::CHECKED, { CheckboxWidget::TEXT_KEY => 'Is true?' }))
-		sheet_section.add_control(1, 1, Field.new(Field::MULTILINE, '', {}))
-		sheet_section.add_control(2, 1, Field.new(Field::LISTBOX, 'B', { ListboxWidget::CHOICES_KEY => %w(A B C) }))
+		sheet = SheetService.instance.create_sheet(def_hash)
 
-		sheet.set_controls(sheet_section)
+		# sheet = Sheet.new(1, 'New Sheet')
+		# sheet_section = SheetSection.new({})
+		#
+		# sheet_section.add_control(0, 0, Field.new(Field::LABEL, 'Test Section', {}))
+		# sheet_section.add_control(1, 0, Field.new(Field::TEXT, 'Test text', {}))
+		# sheet_section.add_control(2, 0, LabeledField.new(Field::TEXT, 'Name', '', {}))
+		#
+		# sheet_section.add_control(0, 1, Field.new(Field::CHECKBOX, CheckboxWidget::CHECKED, { CheckboxWidget::TEXT_KEY => 'Is true?' }))
+		# sheet_section.add_control(1, 1, Field.new(Field::MULTILINE, '', {}))
+		# sheet_section.add_control(2, 1, Field.new(Field::LISTBOX, 'B', { ListboxWidget::CHOICES_KEY => %w(A B C) }))
+		#
+		# inner_sheet_section = SheetSection.new({})
+		#
+		# inner_sheet_section.add_control(0, 0, Field.new(Field::LABEL, 'Inner Section col 0', {}))
+		# inner_sheet_section.add_control(0, 1, Field.new(Field::LABEL, 'Inner Section col 1', {}))
+		#
+		# sheet_section.add_control(3, 0, inner_sheet_section)
+		#
+		# sheet.set_controls(sheet_section)
 		sheet.display_sheet(new_tab)
 	end
 
