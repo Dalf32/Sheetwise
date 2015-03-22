@@ -1,10 +1,10 @@
-# local_source.rb
+# local_repository.rb
 #
 # Author::	Kyle Mullins
 
 require 'pathname'
 
-class LocalSource
+class LocalRepository
   def initialize(definition_dir)
     @definition_dir = Pathname.new(definition_dir) #assert definition_dir.directory?
     @definitions = Hash.new do |cache, def_name|
@@ -23,12 +23,12 @@ class LocalSource
   DEFINITION_EXT = '.sdef'
 
   def scan_definition_dir(definition_name)
-    @definition_dir.each_child do |file|
-	    if file.file? && file.extname.downcase.eql?(DEFINITION_EXT)
-        #TODO: Open the file and look for a definition name
-		    if file.basename(DEFINITION_EXT).to_s.downcase.eql?(definition_name.downcase)
-					return file.readlines.join
-		    end
+    scan_pattern = File.join(@definition_dir.realpath, "*#{DEFINITION_EXT}")
+
+    Pathname.glob(scan_pattern).select(&:file?).select(&:readable?).each do |file|
+      #TODO: Open the file and look for a definition name
+      if file.basename(DEFINITION_EXT).to_s.downcase.eql?(definition_name.downcase)
+        return file.readlines.join
       end
     end
 

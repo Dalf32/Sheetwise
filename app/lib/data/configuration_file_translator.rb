@@ -13,7 +13,7 @@ class ConfigurationFileTranslator
 
 	def read_config
 		unless File.exists?(@config_file)
-			yield Notification.new.add_error("Configuration file #{@config_file} not found.") if block_given?
+			yield Notification.create_error("Configuration file #{@config_file} not found.") if block_given?
 			return
 		end
 
@@ -23,7 +23,7 @@ class ConfigurationFileTranslator
 
 	def read_config_with_default(default_config)
 		unless File.exists?(@config_file)
-			yield Notification.new.add_error("Configuration file #{@config_file} not found, default configuration will be used instead.") if block_given?
+			yield Notification.create_error("Configuration file #{@config_file} not found, default configuration will be used instead.") if block_given?
 			return Configuration.new(default_config)
 		end
 
@@ -33,7 +33,7 @@ class ConfigurationFileTranslator
 
 	def write_config(configuration)
 		unless File.writable?(@config_file)
-			yield Notification.new.add_error("Cannot access file #{@config_file}, Configuration not saved.") if block_given?
+			yield Notification.create_error("Cannot access file #{@config_file}, Configuration not saved.") if block_given?
 			return
 		end
 
