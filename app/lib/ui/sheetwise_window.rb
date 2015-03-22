@@ -8,10 +8,11 @@ require_relative 'sheet'
 require_relative 'controls/labeled_field'
 require_relative '../services/sheet_service'
 require_relative '../data/definition_file_translator'
-require_relative '../data/local_source'
+require_relative '../data/local_repository'
+require_relative '../utilities/notification'
 
 class SheetwiseWindow
-	def initialize(win_width, win_height)
+	def initialize(win_width, win_height, model)
 		root = TkRoot.new do
 			title 'Sheetwise'
 			geometry "#{win_width}x#{win_height}"
@@ -19,6 +20,8 @@ class SheetwiseWindow
 
 		create_menu(root)
 		create_components(root)
+
+    @model = model
 	end
 
 	def show
@@ -60,15 +63,16 @@ class SheetwiseWindow
 			relief 'sunken'
 		end
 
-		@tabs.add(new_tab, text: 'New Tab')
-		@tabs.select(new_tab)
+    def_hash = @model.get_definition_hash('test')
 
-		translator = DefinitionFileTranslator.new
-		translator.add_source(LocalSource.new(Dir.new('/home/kyle/documents/sheet_definitions')))
+    notification = Notification.new
+		sheet = SheetService.instance.create_sheet(def_hash, &Notification.aggregator(notification))
 
-		def_hash = translator.get_definition_hash('test')
-
-		sheet = SheetService.instance.create_sheet(def_hash)
+    if notification.has_errors?
+      Tk::messageBox(title: 'Error', type: 'ok', icon: 'error',
+          message: 'An error occurred and the Sheet cannot be opened:', detail: notification.format_messages)
+      return
+    end
 
 		# sheet = Sheet.new(1, 'New Sheet')
 		# sheet_section = SheetSection.new({})
@@ -89,6 +93,9 @@ class SheetwiseWindow
 		# sheet_section.add_control(3, 0, inner_sheet_section)
 		#
 		# sheet.set_controls(sheet_section)
+
+    @tabs.add(new_tab, text: sheet.name)
+    @tabs.select(new_tab)
 		sheet.display_sheet(new_tab)
 	end
 
