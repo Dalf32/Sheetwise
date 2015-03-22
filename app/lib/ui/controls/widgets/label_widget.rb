@@ -17,7 +17,9 @@ class LabelWidget
 
 		@widget = Tk::Tile::Label.new(parent) do
 			grid row: options_hash[GRID_ROW_KEY], column: options_hash[GRID_COL_KEY]
-		end
+    end
+
+    @default_value = ''
 
 		case options_hash[STYLE_KEY]
 			when HEADING_STYLE

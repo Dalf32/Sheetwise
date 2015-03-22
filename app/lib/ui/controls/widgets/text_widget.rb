@@ -26,7 +26,9 @@ class TextWidget
 				grid row: options_hash[GRID_ROW_KEY], column: options_hash[GRID_COL_KEY]
 			end
 			#TODO: configure single line widgets
-		end
+    end
+
+    @default_value = ''
 
 		if options_hash[READONLY_KEY]
 			#TODO: set widgets to readonly

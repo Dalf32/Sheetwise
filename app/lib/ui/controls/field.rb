@@ -28,7 +28,8 @@ class Field
 		@options[Widget::GRID_ROW_KEY] = row unless row.nil?
 		@options[Widget::GRID_COL_KEY] = col unless col.nil?
 
-		case @field_type
+    #TODO: Validate field_type before we get this far
+		case @field_type.to_sym
 			when HEADER
 				@options[LabelWidget::STYLE_KEY] = LabelWidget::HEADING_STYLE
 				@widget = LabelWidget.new(parent, @options)
@@ -53,7 +54,7 @@ class Field
 				fail "Invalid field type: #{@field_type}"
 		end
 
-		@widget.value = @initial_value
+		@widget.value = @initial_value.nil? ? @widget.default_value : @initial_value
 	end
 
 	def mark_validated(was_validated)
