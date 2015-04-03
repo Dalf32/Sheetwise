@@ -3,6 +3,7 @@
 # Author::  Kyle Mullins
 
 require 'singleton'
+require 'securerandom'
 require_relative 'sheet_service'
 require_relative '../utilities/notification'
 
@@ -23,37 +24,40 @@ class FieldService
       yield Notification.create_error("Field not added to Sheet, 'Name' is required.") if block_given?
     end
 
-    add_field(field_name, field) unless field_type.nil? || field_name.nil?
+    field_id = SecureRandom.uuid
+
+    add_field(field_id, field) unless field_type.nil? || field_name.nil?
+    [field_id, field]
 	end
 
-	def add_field(field_name, field)
-		qualified_name = qualify_field_name(field_name)
-
-		if @fields.has_key?(qualified_name)
-			fail "Field with name: #{field_name} already exists; all fields must have a unique name."
+	def add_field(field_id, field)
+		if @fields.has_key?(field_id)
+			fail "Field with ID: #{field_id} already exists; all fields must have a unique ID."
 		end
 
-		@fields[qualified_name] = field
+		@fields[field_id] = field
 	end
 
-	def remove_field(field_name)
-		@fields.delete(qualify_field_name(field_name))
+	def remove_field(field_id)
+		@fields.delete(field_id)
 	end
 
 	def remove_fields_for_sheet(sheet_id)
-		@fields.delete_if do |name, field| name.end_with?(qualify_field_name('', sheet_id)) end
+    fields_for_sheet = get_fields_for_sheet(sheet_id)
+		@fields.delete_if do |field_id, _field| fields_for_sheet.include?(field_id) end
 	end
 
-	def get_field(field_name)
-		@fields[qualify_field_name(field_name)]
+	def get_field(field_id)
+		@fields[field_id]
 	end
 
-	def get_all_fields
-		@fields.collect{ |name, field| name.end_with?(qualify_field_name('')) }
+	def get_fields_for_sheet(sheet_id)
+    field_ids = SheetService.instance.get_sheet_controls(sheet_id)
+    field_ids.inject([]){ |fields_for_sheet, field_id| fields_for_sheet<<@fields[field_id] }.delete(nil)
 	end
 
 	def get_unvalidated_fields
-		get_all_fields.collect{ |name, field| !field.validated? }
+		get_fields_for_sheet.collect{ |field| !field.validated? }
 	end
 
 	def add_validator(validator)
@@ -64,24 +68,18 @@ class FieldService
 		# @validators[validator.target_field] = validator
 	end
 
-	def get_validator(field_name)
-		@validators[qualify_field_name(field_name)]
+	def get_validator(field_id)
+		@validators[field_id]
 	end
 
-	def has_validator?(field_name)
-		@validators.has_key?(qualify_field_name(field_name))
+	def has_validator?(field_id)
+		@validators.has_key?(field_id)
 	end
 
 	private
 
-	NAME_SEPARATOR = '@'
-
 	def initialize
 		@fields = {}
 		@validators = {}
-	end
-
-	def qualify_field_name(field_name, sheet_id = SheetService.instance.active_sheet_id)
-		field_name + NAME_SEPARATOR + sheet_id
 	end
 end

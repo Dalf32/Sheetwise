@@ -42,6 +42,7 @@ class SheetwiseWindow
 		file_menu.add(:command, label: 'Open Sheet...', command: proc{ open_sheet })
 		file_menu.add(:command, label: 'Save', command: proc{ save })
 		file_menu.add(:command, label: 'Save As...', command: proc{ save_as })
+    file_menu.add(:command, label: 'Close Sheet', command: proc{ close_sheet })
 		file_menu.add(:command, label: 'Exit', command: proc{ exit(root) })
 
 		settings_menu = TkMenu.new(menubar)
@@ -74,26 +75,6 @@ class SheetwiseWindow
       return
     end
 
-		# sheet = Sheet.new(1, 'New Sheet')
-		# sheet_section = SheetSection.new({})
-		#
-		# sheet_section.add_control(0, 0, Field.new(Field::LABEL, 'Test Section', {}))
-		# sheet_section.add_control(1, 0, Field.new(Field::TEXT, 'Test text', {}))
-		# sheet_section.add_control(2, 0, LabeledField.new(Field::TEXT, 'Name', '', {}))
-		#
-		# sheet_section.add_control(0, 1, Field.new(Field::CHECKBOX, CheckboxWidget::CHECKED, { CheckboxWidget::TEXT_KEY => 'Is true?' }))
-		# sheet_section.add_control(1, 1, Field.new(Field::MULTILINE, '', {}))
-		# sheet_section.add_control(2, 1, Field.new(Field::LISTBOX, 'B', { ListboxWidget::CHOICES_KEY => %w(A B C) }))
-		#
-		# inner_sheet_section = SheetSection.new({})
-		#
-		# inner_sheet_section.add_control(0, 0, Field.new(Field::LABEL, 'Inner Section col 0', {}))
-		# inner_sheet_section.add_control(0, 1, Field.new(Field::LABEL, 'Inner Section col 1', {}))
-		#
-		# sheet_section.add_control(3, 0, inner_sheet_section)
-		#
-		# sheet.set_controls(sheet_section)
-
     @tabs.add(new_tab, text: sheet.name)
     @tabs.select(new_tab)
 		sheet.display_sheet(new_tab)
@@ -110,6 +91,16 @@ class SheetwiseWindow
 	def save_as
 		puts 'save_as'
 	end
+
+  def close_sheet
+    selected_tab = @tabs.selected
+    #TODO: Create a Frame subclass that holds a sheet_id and knows how to format itself like a Sheet
+
+    unless selected_tab.nil?
+      #SheetService.instance.remove_sheet(selected_tab.sheet_id)
+      @tabs.forget(selected_tab)
+    end
+  end
 
 	def exit(window_root)
 		window_root.destroy
