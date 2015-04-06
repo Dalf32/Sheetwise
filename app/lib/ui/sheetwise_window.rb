@@ -6,8 +6,8 @@ require 'tk'
 
 require_relative 'sheet'
 require_relative 'controls/labeled_field'
+require_relative 'controls/sheet_frame'
 require_relative '../services/sheet_service'
-require_relative '../data/definition_file_translator'
 require_relative '../data/local_repository'
 require_relative '../utilities/notification'
 
@@ -59,12 +59,8 @@ class SheetwiseWindow
 	private
 
 	def new_sheet
-		new_tab = Tk::Tile::Frame.new(@tabs) do
-			pack padx: 1, pady: 1, fill: 'both'
-			relief 'sunken'
-		end
-
-    def_hash = @model.get_definition_hash('test')
+    #TODO: Present custom dialog allowing user to browse definition repos and pick one
+    def_hash = @model.get_definition('test')
 
     notification = Notification.new
 		sheet = SheetService.instance.create_sheet(def_hash, &Notification.aggregator(notification))
@@ -74,6 +70,8 @@ class SheetwiseWindow
           message: 'An error occurred and the Sheet cannot be opened:', detail: notification.format_messages)
       return
     end
+
+    new_tab = SheetFrame.new(@tabs, sheet.id)
 
     @tabs.add(new_tab, text: sheet.name)
     @tabs.select(new_tab)
@@ -92,17 +90,19 @@ class SheetwiseWindow
 		puts 'save_as'
 	end
 
-  def close_sheet
-    selected_tab = @tabs.selected
-    #TODO: Create a Frame subclass that holds a sheet_id and knows how to format itself like a Sheet
-
-    unless selected_tab.nil?
-      #SheetService.instance.remove_sheet(selected_tab.sheet_id)
-      @tabs.forget(selected_tab)
+  def close_sheet(selected_sheet = @tabs.selected)
+    unless selected_sheet.nil?
+      #TODO: Check dirty state of selected sheet and prompt if dirty
+      SheetService.instance.remove_sheet(selected_sheet.sheet_id)
+      @tabs.forget(selected_sheet)
     end
   end
 
 	def exit(window_root)
+    @tabs.tabs.each do |current_tab|
+      close_sheet(current_tab)
+    end
+
 		window_root.destroy
 	end
 

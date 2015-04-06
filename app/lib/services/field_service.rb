@@ -53,7 +53,7 @@ class FieldService
 
 	def get_fields_for_sheet(sheet_id)
     field_ids = SheetService.instance.get_sheet_controls(sheet_id)
-    field_ids.inject([]){ |fields_for_sheet, field_id| fields_for_sheet<<@fields[field_id] }.delete(nil)
+    field_ids.inject([]){ |fields_for_sheet, field_id| fields_for_sheet<<@fields[field_id] }.compact
 	end
 
 	def get_unvalidated_fields

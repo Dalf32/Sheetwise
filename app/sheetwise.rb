@@ -6,7 +6,7 @@ require 'optparse'
 require_relative 'lib/ui/sheetwise_window'
 require_relative 'lib/data/configuration_file_translator'
 require_relative 'lib/data/default_configuration'
-require_relative 'lib/data/definition_file_translator'
+require_relative 'lib/data/repository_manager'
 require_relative 'lib/data/local_repository'
 
 #MAIN
@@ -43,15 +43,15 @@ unless config.version.start_with?(VERSION_STRING[0..-(PATCH_VERSION.size + 1)])
 	abort "Configuration file out of date!\n\tSheetwise version: #{VERSION_STRING}\n\tConfiguration version: #{config.version}"
 end
 
-definition_translator = DefinitionFileTranslator.new
+repository_manager = RepositoryManager.new
 
 config.repositories.each{|source|
   #TODO: differentiate between local and remote sources
-  definition_translator.add_source(LocalRepository.new(source))
+  repository_manager.add_source(LocalRepository.new(source))
 }
 
 #TODO: create actual model and pass that instead of the DefinitionFileTranslator
-window = SheetwiseWindow.new(config.window_width, config.window_height, definition_translator)
+window = SheetwiseWindow.new(config.window_width, config.window_height, repository_manager)
 window.show
 
 config_translator.write_config(config, &Notification.aggregator(notification))
