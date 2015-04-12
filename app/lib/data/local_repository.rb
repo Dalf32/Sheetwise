@@ -3,6 +3,7 @@
 # Author::	Kyle Mullins
 
 require 'pathname'
+require_relative 'definition_listing'
 require_relative 'definition_translator'
 
 class LocalRepository
@@ -10,7 +11,7 @@ class LocalRepository
 
   def initialize(definition_dir)
     @definition_dir = Pathname.new(definition_dir) #assert definition_dir.directory?
-    @definitions = {}
+    @definitions = DefinitionListing.new
     @definition_cache = Hash.new do |cache, def_name|
       file_contents = read_definition(@definitions[def_name])
 
@@ -25,16 +26,19 @@ class LocalRepository
   end
 
   def display_name
-    #TODO: Optional user-entered name stored in definition listing
-    @definition_dir
+    if @definitions.has_name?
+      @definitions.name
+    else
+      @definition_dir
+    end
   end
 
   def list_definitions
-    @definitions.keys
+    @definitions.list_definitions
   end
 
   def contains?(definition_name)
-    @definitions.has_key?(definition_name)
+    @definitions.contains?(definition_name)
   end
 
   def retrieve_definition(definition_name)
@@ -49,8 +53,10 @@ class LocalRepository
   DEFINITION_LISTING = '.deflist'
 
   def read_definition(definition_path)
-    if File.readable?(definition_path.nil? ? '' : definition_path)
-      return File.readlines(definition_path).join
+    full_path = @definition_dir.join(definition_path.nil? ? '' : definition_path)
+
+    if File.readable?(full_path)
+      return File.readlines(full_path).join
     end
 
     :def_not_found
@@ -65,9 +71,7 @@ class LocalRepository
       #TODO: Open the file and look for a definition name
       def_name = file.basename(DEFINITION_EXT).to_s
 
-      unless @definitions.include?(def_name)
-        @definitions[def_name] = file.to_s
-      end
+      @definitions[def_name] = file.to_s unless @definitions.contains?(def_name)
     end
 
     Pathname.glob(dir_scan_pattern).select(&:directory?).select(&:readable?).each do |dir|
@@ -81,11 +85,7 @@ class LocalRepository
     def_listing_file = Pathname.new(File.join(@definition_dir.realpath, DEFINITION_LISTING))
 
     if def_listing_file.readable?
-      def_listing = DefinitionTranslator.parse_definition_listing(def_listing_file.readlines.join)
-
-      def_listing.each do |def_name, def_path|
-        @definitions[def_name] = File.join(@definition_dir, def_path)
-      end
+      @definitions = DefinitionTranslator.parse_definition_listing(def_listing_file.readlines.join)
     else
       scan_definition_dir
     end
