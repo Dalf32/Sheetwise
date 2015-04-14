@@ -11,14 +11,14 @@ class FieldService
 	include Singleton
 
 	def create_field(field_def_hash)
-    field_type = field_def_hash[DefinitionConstants::FIELD_TYPE]
-    field_name = field_def_hash[DefinitionConstants::NAME]
+    field_type = field_def_hash[Constants::FIELD_TYPE]
+    field_name = field_def_hash[Constants::NAME]
 
     if field_type.nil?
       yield Notification.create_error("Field not created, 'Type' is required.") if block_given?
     end
 
-    field = Field.new(field_type, field_def_hash[DefinitionConstants::FIELD_VALUE], field_def_hash)
+    field = Field.new(field_type, field_def_hash[Constants::FIELD_VALUE], field_def_hash)
 
     if field_name.nil?
       yield Notification.create_error("Field not added to Sheet, 'Name' is required.") if block_given?

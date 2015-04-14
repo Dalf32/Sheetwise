@@ -4,33 +4,31 @@
 
 require 'tk'
 require_relative 'widget'
+require_relative '../../../data/definition_constants'
 
 class TextWidget
 	include Widget
 
-	MULTILINE_KEY = :is_multiline
-	READONLY_KEY = :is_readonly
-
 	def initialize(parent, options_hash)
 		super()
 
-		if options_hash[MULTILINE_KEY]
+		if options_hash[Constants::Widget::Text::MULTILINE_KEY]
 			@widget = TkText.new(parent) do
-				grid row: options_hash[GRID_ROW_KEY], column: options_hash[GRID_COL_KEY]
+				grid row: options_hash[Constants::GRID_ROW], column: options_hash[Constants::GRID_COL]
 				width 20
 				height 5
 			end
 			#TODO: configure multiline widgets
 		else
 			@widget = Tk::Tile::Entry.new(parent) do
-				grid row: options_hash[GRID_ROW_KEY], column: options_hash[GRID_COL_KEY]
+				grid row: options_hash[Constants::GRID_ROW], column: options_hash[Constants::GRID_COL]
 			end
 			#TODO: configure single line widgets
     end
 
     @default_value = ''
 
-		if options_hash[READONLY_KEY]
+		if options_hash[Constants::Widget::Text::READONLY_KEY]
 			#TODO: set widgets to readonly
 		end
 	end

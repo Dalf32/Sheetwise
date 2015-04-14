@@ -8,6 +8,7 @@ require_relative 'lib/data/configuration_file_translator'
 require_relative 'lib/data/default_configuration'
 require_relative 'lib/data/repository_manager'
 require_relative 'lib/data/local_repository'
+require_relative 'lib/services/configuration_service'
 
 #MAIN
 
@@ -43,6 +44,7 @@ unless config.version.start_with?(VERSION_STRING[0..-(PATCH_VERSION.size + 1)])
 	abort "Configuration file out of date!\n\tSheetwise version: #{VERSION_STRING}\n\tConfiguration version: #{config.version}"
 end
 
+ConfigurationService.instance.set_configuration(config)
 repository_manager = RepositoryManager.new
 
 config.repositories.each{|source|
@@ -51,6 +53,7 @@ config.repositories.each{|source|
 }
 
 #TODO: create actual model and pass that instead of the DefinitionFileTranslator
+#TODO: also pass actual Configuration object to model so it can be mutated
 window = SheetwiseWindow.new(config.window_width, config.window_height, repository_manager)
 window.show
 

@@ -4,6 +4,7 @@
 
 require 'tk'
 require_relative 'field'
+require_relative '../../data/definition_constants'
 
 class LabeledField < Field
 	def initialize(field_type, label_text, initial_value, options_hash)
@@ -21,7 +22,7 @@ class LabeledField < Field
 		TkGrid.columnconfigure(container, 0, weight: 1)
 		TkGrid.columnconfigure(container, 1, weight: 1)
 
-		label_field = Field.new(Field::LABEL, @label_text.to_s, {})
+		label_field = Field.new(Constants::Field::LABEL, @label_text.to_s, {})
 		label_field.show_control(container, 0, 0)
 
 		super(container, 0, 1)

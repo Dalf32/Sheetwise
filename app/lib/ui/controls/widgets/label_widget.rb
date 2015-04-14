@@ -4,30 +4,27 @@
 
 require 'tk'
 require_relative 'widget'
+require_relative '../../../data/definition_constants'
 
 class LabelWidget
 	include Widget
-
-	STYLE_KEY = :style
-	HEADING_STYLE = :heading
-	NORMAL_STYLE = :normal
 
 	def initialize(parent, options_hash)
 		super()
 
 		@widget = Tk::Tile::Label.new(parent) do
-			grid row: options_hash[GRID_ROW_KEY], column: options_hash[GRID_COL_KEY]
+			grid row: options_hash[Constants::GRID_ROW], column: options_hash[Constants::GRID_COL]
     end
 
     @default_value = ''
 
-		case options_hash[STYLE_KEY]
-			when HEADING_STYLE
+		case options_hash[Constants::Widget::Label::STYLE_KEY]
+			when Constants::Widget::Label::HEADING_STYLE
 				#TODO: heading styling
-			when NORMAL_STYLE
+			when Constants::Widget::Label::NORMAL_STYLE
 				#TODO: normal styling
 			else
-				fail "Invalid style: #{options_hash[STYLE_KEY]}"
+				fail "Invalid style: #{options_hash[Constants::Widget::Label::STYLE_KEY]}"
 		end
 	end
 

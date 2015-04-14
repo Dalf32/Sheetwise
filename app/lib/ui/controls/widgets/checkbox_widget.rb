@@ -4,26 +4,23 @@
 
 require 'tk'
 require_relative 'widget'
+require_relative '../../../data/definition_constants'
 
 class CheckboxWidget
 	include Widget
-
-	TEXT_KEY = :text
-	CHECKED = 'checked'
-	UNCHECKED = 'unchecked'
 
 	def initialize(parent, text, options_hash)
 		super()
 
 		@widget = Tk::Tile::CheckButton.new(parent) do
 			text text
-			onvalue CHECKED
-			offvalue UNCHECKED
+			onvalue Constants::Widget::Checkbox::CHECKED
+			offvalue Constants::Widget::Checkbox::UNCHECKED
 			variable TkVariable.new
-			grid row: options_hash[GRID_ROW_KEY], column: options_hash[GRID_COL_KEY]
+			grid row: options_hash[Constants::GRID_ROW], column: options_hash[Constants::GRID_COL]
     end
 
-    @default_value = UNCHECKED
+    @default_value = Constants::Widget::Checkbox::UNCHECKED
 	end
 
 	def value
@@ -31,7 +28,7 @@ class CheckboxWidget
 	end
 
 	def value=(new_value)
-		if [CHECKED, UNCHECKED].include?(new_value)
+		if [Constants::Widget::Checkbox::CHECKED, Constants::Widget::Checkbox::UNCHECKED].include?(new_value)
 			@widget.variable.value = new_value
 			@is_dirty = true
 		end

@@ -2,7 +2,7 @@
 #
 # Author::  Kyle Mullins
 
-module DefinitionConstants
+module Constants
 	NAME = :name
 	CONTROL_LIST = :controls
 	VALIDATOR_LIST = :validators
@@ -16,5 +16,44 @@ module DefinitionConstants
 	GRID_COL = :col
   SECTION = :section
 
-  #TODO: Reorganize all data key constants to reside here in submodules
+  module Field
+    HEADER = :header
+    LABEL = :label
+    TEXT = :text
+    MULTILINE = :multiline
+    NUMERIC = :numeric
+    LISTBOX = :listbox
+    CHECKBOX = :checkbox
+
+    module Table
+      HEADERS_KEY = :headers
+      SHOW_HEADERS = :show
+      HIDE_HEADERS = :hide
+    end
+  end
+
+  module Widget
+    module Checkbox
+      TEXT_KEY = :text
+      CHECKED = 'checked'
+      UNCHECKED = 'unchecked'
+    end
+
+    module Label
+      STYLE_KEY = :style
+      HEADING_STYLE = :heading
+      NORMAL_STYLE = :normal
+    end
+
+    module Listbox
+      CHOICES_KEY = :choices
+    end
+
+    module Text
+      MULTILINE_KEY = :is_multiline
+      READONLY_KEY = :is_readonly
+    end
+  end
 end
+
+Constants.freeze

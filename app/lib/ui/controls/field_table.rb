@@ -3,6 +3,7 @@
 # Author::  Kyle Mullins
 
 require 'tk'
+require_relative '../../data/definition_constants'
 
 class FieldTable
 	HEADERS_KEY = :headers
@@ -26,7 +27,7 @@ class FieldTable
 			TkGrid.columnconfigure(@collection_frame, n, weight: 1)
 		end
 
-		if @options[HEADERS_KEY] == SHOW_HEADERS
+		if @options[Constants::Field::Table::HEADERS_KEY] == Constants::Field::Table::SHOW_HEADERS
 			TkGrid.rowconfigure(@collection_frame, 0, weight: 1)
 
 			@columns.size.times do |n|
