@@ -31,12 +31,23 @@ class Configuration
 	def method_missing(config_key, *args)
 		if args.empty?
 			get(config_key)
-		elsif args.size == 1
+    elsif args.size == 1
+      config_key = strip_equals(config_key)
 			set(config_key, args.first)
 		else
 			super
 		end
-	end
+  end
+
+  def respond_to_missing?(config_key, *)
+    config_key = strip_equals(config_key)
+
+    if @config.include?(config_key) || @fallback_config.include?(config_key)
+      true
+    else
+      super
+    end
+  end
 
 	alias_method :to_hash, :to_h
 
@@ -44,5 +55,11 @@ class Configuration
 
 	def normalize_hash(hash)
 		hash.transform_keys(&Transforms::Normalize)
-	end
+  end
+
+  def strip_equals(key)
+    key = key.to_s
+    key = key.chop if key.end_with?('=')
+    key.to_sym
+  end
 end

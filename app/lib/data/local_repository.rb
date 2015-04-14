@@ -5,6 +5,7 @@
 require 'pathname'
 require_relative 'definition_listing'
 require_relative 'definition_translator'
+require_relative '../services/configuration_service'
 
 class LocalRepository
   #TODO: Save definition listing after scanning
@@ -62,8 +63,7 @@ class LocalRepository
     :def_not_found
   end
 
-  def scan_definition_dir(def_dir = @definition_dir)
-    #TODO: Support max nesting
+  def scan_definition_dir(def_dir = @definition_dir, nest_level = 0)
     def_scan_pattern = File.join(@definition_dir.realpath, "*#{DEFINITION_EXT}")
     dir_scan_pattern = File.join(@definition_dir.realpath, '*')
 
@@ -74,9 +74,11 @@ class LocalRepository
       @definitions[def_name] = file.to_s unless @definitions.contains?(def_name)
     end
 
-    Pathname.glob(dir_scan_pattern).select(&:directory?).select(&:readable?).each do |dir|
-      unless ['.', '..'].include?(dir.to_s)
-        scan_definition_dir(dir)
+    unless nest_level >= ConfigurationService.instance.max_directory_nesting
+      Pathname.glob(dir_scan_pattern).select(&:directory?).select(&:readable?).each do |dir|
+        unless ['.', '..'].include?(dir.to_s)
+          scan_definition_dir(dir, nest_level + 1)
+        end
       end
     end
   end

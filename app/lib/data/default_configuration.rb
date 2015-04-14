@@ -9,5 +9,6 @@ DEFAULT_CONFIG =
       window_height: 400,
       validator_timeout: 100,
       calculator_timeout: 250,
+      max_directory_nesting: 3,
       repositories: []
   }
