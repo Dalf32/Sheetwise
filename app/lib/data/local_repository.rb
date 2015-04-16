@@ -5,6 +5,7 @@
 require 'pathname'
 require_relative 'definition_listing'
 require_relative 'definition_translator'
+require_relative 'definition_constants'
 require_relative '../services/configuration_service'
 
 class LocalRepository
@@ -46,6 +47,19 @@ class LocalRepository
 		@definition_cache[definition_name]
   end
 
+  def rename_definition(old_name, new_name)
+    @definitions.rename_definition(old_name, new_name) if contains?(old_name)
+  end
+
+  def add_definition(definition_name, definition_path)
+    @definitions.add_definition(definition_name, definition_path) unless contains?(definition_name)
+  end
+
+  def refresh_repository
+    remove_missing_definitions
+    scan_definition_dir
+  end
+
   private
 
   MAX_CACHE_SIZE = 3
@@ -53,25 +67,37 @@ class LocalRepository
   DEFINITION_EXT = '.sdef'
   DEFINITION_LISTING = '.deflist'
 
-  def read_definition(definition_path)
-    full_path = @definition_dir.join(definition_path.nil? ? '' : definition_path)
+  def full_repo_path(path)
+    @definition_dir.realpath.join(path.nil? ? '' : path)
+  end
 
-    if File.readable?(full_path)
-      return File.readlines(full_path).join
-    end
+  def read_definition(definition_path)
+    full_path = full_repo_path(definition_path)
+    return full_path.read if full_path.readable?
 
     :def_not_found
   end
 
+  def populate_definitions
+    def_listing_file = full_repo_path(DEFINITION_LISTING)
+
+    if def_listing_file.readable?
+      @definitions = DefinitionTranslator.parse_definition_listing(def_listing_file.read)
+    else
+      scan_definition_dir
+    end
+  end
+
+  #TODO: Support for directory exclusion/pruning
   def scan_definition_dir(def_dir = @definition_dir, nest_level = 0)
-    def_scan_pattern = File.join(@definition_dir.realpath, "*#{DEFINITION_EXT}")
-    dir_scan_pattern = File.join(@definition_dir.realpath, '*')
+    def_scan_pattern = def_dir.join("*#{DEFINITION_EXT}")
+    dir_scan_pattern = def_dir.join('*')
 
     Pathname.glob(def_scan_pattern).select(&:file?).select(&:readable?).each do |file|
-      #TODO: Open the file and look for a definition name
-      def_name = file.basename(DEFINITION_EXT).to_s
+      definition_hash = DefinitionTranslator.parse_definition(read_definition(file))
+      def_name = definition_hash[Constants::NAME]
 
-      @definitions[def_name] = file.to_s unless @definitions.contains?(def_name)
+      @definitions[def_name] = file.to_s unless def_name.nil? || @definitions.contains?(def_name)
     end
 
     unless nest_level >= ConfigurationService.instance.max_directory_nesting
@@ -83,13 +109,11 @@ class LocalRepository
     end
   end
 
-  def populate_definitions
-    def_listing_file = Pathname.new(File.join(@definition_dir.realpath, DEFINITION_LISTING))
-
-    if def_listing_file.readable?
-      @definitions = DefinitionTranslator.parse_definition_listing(def_listing_file.readlines.join)
-    else
-      scan_definition_dir
+  def remove_missing_definitions
+    list_definitions.each do |def_name|
+      unless full_repo_path(def_name).readable?
+        @definitions.delete_definition(def_name)
+      end
     end
   end
 end

@@ -3,11 +3,12 @@
 # Author::	Kyle Mullins
 
 class DefinitionListing
-  attr_accessor :name
+  attr_accessor :name, :exclusions
 
   def initialize(listing = {}, name = nil)
     @name = name
     @listing = listing
+    @exclusions = []
   end
 
   def has_name?
@@ -42,10 +43,15 @@ class DefinitionListing
     @listing[definition_name]
   end
 
-  def to_h
-    hash = { definitions: @listing }
-    hash[:name] = @name if has_name?
+  def delete_definition(definition_name)
+    @listing.delete(definition_name)
+  end
 
-    hash
+  def rename_definition(old_name, new_name)
+    @listing[new_name] = @listing.delete(old_name)
+  end
+
+  def to_h
+    @listing.dup
   end
 end

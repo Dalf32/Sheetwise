@@ -16,7 +16,7 @@ module Constants
 	GRID_COL = :col
   SECTION = :section
 
-  module Field
+  module Fields
     HEADER = :header
     LABEL = :label
     TEXT = :text
@@ -32,7 +32,7 @@ module Constants
     end
   end
 
-  module Widget
+  module Widgets
     module Checkbox
       TEXT_KEY = :text
       CHECKED = 'checked'
@@ -53,6 +53,12 @@ module Constants
       MULTILINE_KEY = :is_multiline
       READONLY_KEY = :is_readonly
     end
+  end
+
+  module Listing
+    NAME = 'name'
+    DEFINITIONS = 'definitions'
+    EXCLUSIONS = 'exclusions'
   end
 end
 

@@ -8,11 +8,12 @@ require_relative '../../../data/definition_constants'
 
 class TextWidget
 	include Widget
+	include Constants::Widgets
 
 	def initialize(parent, options_hash)
 		super()
 
-		if options_hash[Constants::Widget::Text::MULTILINE_KEY]
+		if options_hash[Text::MULTILINE_KEY]
 			@widget = TkText.new(parent) do
 				grid row: options_hash[Constants::GRID_ROW], column: options_hash[Constants::GRID_COL]
 				width 20
@@ -28,7 +29,7 @@ class TextWidget
 
     @default_value = ''
 
-		if options_hash[Constants::Widget::Text::READONLY_KEY]
+		if options_hash[Text::READONLY_KEY]
 			#TODO: set widgets to readonly
 		end
 	end

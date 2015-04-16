@@ -13,9 +13,10 @@ require_relative '../utilities/notification'
 
 class SheetService
 	include Singleton
+  include Constants
 
 	def create_sheet(sheet_def_hash)
-		sheet_name = sheet_def_hash[Constants::NAME]
+		sheet_name = sheet_def_hash[NAME]
 
     notif_block = block_given? ? Proc.new : ->{}
 
@@ -74,17 +75,17 @@ class SheetService
 
 		root_section = SheetSection.new({})
 
-		sheet_def_hash[Constants::CONTROL_LIST].each do |control_hash|
-      control_type = control_hash[Constants::FIELD_TYPE]
+		sheet_def_hash[CONTROL_LIST].each do |control_hash|
+      control_type = control_hash[FIELD_TYPE]
 
-      if control_type == Constants::SECTION
-        control = create_controls(sheet_id, control_hash, control_hash[Constants::NAME], &notif_block)
+      if control_type == SECTION
+        control = create_controls(sheet_id, control_hash, control_hash[NAME], &notif_block)
       else
         control_id, control = *FieldService.instance.create_field(control_hash, &notif_block)
       end
 
-      row = control_hash[Constants::GRID_ROW]
-      col = control_hash[Constants::GRID_COL]
+      row = control_hash[GRID_ROW]
+      col = control_hash[GRID_COL]
 
       if row.nil? || col.nil?
         yield Notification.create_error("Control not added to Section: #{section_name}, 'Row' and 'Col' are required.")

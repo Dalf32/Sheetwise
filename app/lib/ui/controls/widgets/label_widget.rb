@@ -8,6 +8,7 @@ require_relative '../../../data/definition_constants'
 
 class LabelWidget
 	include Widget
+	include Constants::Widgets
 
 	def initialize(parent, options_hash)
 		super()
@@ -18,13 +19,13 @@ class LabelWidget
 
     @default_value = ''
 
-		case options_hash[Constants::Widget::Label::STYLE_KEY]
-			when Constants::Widget::Label::HEADING_STYLE
+		case options_hash[Label::STYLE_KEY]
+			when Label::HEADING_STYLE
 				#TODO: heading styling
-			when Constants::Widget::Label::NORMAL_STYLE
+			when Label::NORMAL_STYLE
 				#TODO: normal styling
 			else
-				fail "Invalid style: #{options_hash[Constants::Widget::Label::STYLE_KEY]}"
+				fail "Invalid style: #{options_hash[Label::STYLE_KEY]}"
 		end
 	end
 
