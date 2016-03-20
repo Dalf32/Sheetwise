@@ -3,20 +3,33 @@
 # Author::  Kyle Mullins
 
 require_relative 'user_code'
-require_relative '../services/field_service'
+require_relative 'validator_context'
 
-class Validator < UserCode
-	attr_reader :target_fields
+class Validator
+  include UserCode
 
-	def validator(user_code, target_fields)
-		super(user_code)
+  def initialize(field_id_map, *fields)
+    super
+  end
 
-		@target_fields = target_fields
-	end
+  def register
+    UserCodeService.instance.add_validator(@id, self)
+  end
 
-	protected
+  def with(*fields, &block)
+    @code_block = block
+    @gettable_fields = fields
+  end
 
-	def get_run_params
-		# { @target_field => FieldService.instance.get_field(@target_field) }
-	end
+	def run(field_id)
+    puts field_id
+    context = ValidatorContext.new
+    generate_field_getter(context, 'value', field_id)
+
+		$SAFE = 1
+		context.instance_eval(&@code_block)
+	rescue RuntimeError => e
+		#Signifies validation failure: bubble result up
+    $stderr << e
+  end
 end

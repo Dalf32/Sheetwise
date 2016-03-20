@@ -4,7 +4,7 @@
 
 require 'tk'
 require_relative 'widget'
-require_relative '../../../data/definition_constants'
+require_relative '../../../data/constants'
 
 class TextWidget
 	include Widget

@@ -4,13 +4,20 @@
 
 require 'json'
 require_relative 'definition_listing'
-require_relative 'definition_constants'
+require_relative 'constants'
 
 class DefinitionTranslator
   include Constants::Listing
 
-	def self.parse_definition(definition_text)
-		JSON.parse(definition_text, { symbolize_names: true })
+	def self.parse_definition(definition)
+    unless definition.parsed?
+      def_json, def_code = definition.raw_text.split(Constants::CODE_BLOCK)
+      def_structure = JSON.parse(def_json, { symbolize_names: true })
+
+      definition.set_parsed_data(def_structure, def_code)
+    end
+
+    definition
   end
 
   def self.parse_definition_listing(def_listing_json)

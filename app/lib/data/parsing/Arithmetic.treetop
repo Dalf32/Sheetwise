@@ -1,0 +1,34 @@
+# Arithmetic.treetop
+#
+# Author::	Kyle Mullins
+
+grammar Arithmetic
+	include Tokens
+
+	rule expression
+		simple_expr / nested_expr / identifier
+	end
+
+	rule nested_expr
+		(unary_op '(' any_ws? expression any_ws? ')') /
+		('(' any_ws? expression any_ws? ')' binary_op '(' any_ws? expression any_ws? ')') /
+		('(' any_ws? expression any_ws? ')' binary_op operand) /
+		(operand binary_op '(' any_ws? expression any_ws? ')')
+	end
+
+	rule simple_expr
+		(unary_op identifier) / (operand binary_op operand)
+	end
+
+	rule operand
+		identifier / integer / float
+	end
+
+	rule unary_op
+		'+' / '-'
+	end
+
+	rule binary_op
+		any_ws? ('+' / '-' / '**' / '/' / '%' / '*') any_ws?
+	end
+end

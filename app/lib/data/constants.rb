@@ -1,10 +1,11 @@
-# definition_constants.rb
+# constants.rb
 #
 # Author::  Kyle Mullins
 
 module Constants
 	NAME = :name
 	CONTROL_LIST = :controls
+  CODE_BLOCK = '##CODE##'
 	VALIDATOR_LIST = :validators
 	CALCULATOR_LIST = :calculators
 
@@ -15,6 +16,11 @@ module Constants
 	GRID_ROW = :row
 	GRID_COL = :col
   SECTION = :section
+
+  module Sheets
+    FIELDS = :fields
+    TITLE = :title
+  end
 
   module Fields
     HEADER = :header

@@ -3,84 +3,93 @@
 # Author::  Kyle Mullins
 
 require 'singleton'
+require 'securerandom'
 require_relative 'field_service'
 require_relative 'sheet_service'
-require_relative '../data/definition_constants'
+require_relative '../data/constants'
+require_relative '../runnable/user_code_context'
+require_relative '../data/parsing/script_parser'
 
 class UserCodeService
 	include Singleton
 
-	def create_user_code(user_code_def_hash)
-		validators = create_validators(user_code_def_hash)
-		calculators = create_calculators(user_code_def_hash)
+	def create_user_code(user_code_block, sheet_id)
+    field_ids = FieldService.instance.get_field_map_for_sheet(sheet_id)
+    parser = ScriptParser.new(user_code_block)
+    parser.parse
 
-		validators.each do |validator| add_validator(validator) end
-		calculators.each do |calculator| add_calculator(calculator) end
+    notif_block = block_given? ? Proc.new : ->{}
+
+    if parser.failed?
+      notif_block.call Notification.create_error(parser.pretty_print_failure)
+    end
+
+    #UserCodeContext.new(field_ids).evaluate(user_code_block)
+
+    field_ids.values.each{ |field_id| validate_field(field_id) }
 	end
 
-	def validate_field(field_name)
-		if has_validator?(field_name)
-			validator = FieldService.instance.get_validator(field_name)
-			field = FieldService.instance.get_field(field_name)
+	def validate_field(field_id)
+    validation_successful = true
 
-			validation_successful = validator.run
-			field.mark_validated(validation_successful)
+    get_validators(field_id).each do |validator|
+      validation_successful &= Thread.new do
+  			validator.run(field_id)
+      end.join
+    end
+
+    #TODO: mark field 'validated' or 'validation failed'
+  end
+
+	def calculate_for_field(field_id)
+		get_dependent_calculators(field_id) do |calculator|
+			calculator.run
 		end
 	end
 
-	def calculate_for_field(field_name)
-		if has_dependent_calculators?(field_name)
-			calculators = get_dependent_calculators(field_name)
-
-			calculators.each do |calculator| calculator.run end
-			#TODO: field.mark_ok()
-		end
+	def add_calculator(id, calculator)
+    @calculators[id] = calculator unless @calculators.include?(id)
 	end
 
-	def add_calculator(calculator)
-		@calculators[SheetService.instance.active_sheet]<<calculator
+	def get_dependent_calculators(field_id)
+    get_registrations_in_hash(field_id, @calculators)
 	end
 
-	def calculators
-		@calculators[SheetService.instance.active_sheet]
+	def has_dependent_calculators?(field_id)
+		!get_dependent_calculators(field_id).empty?
 	end
 
-	def get_dependent_calculators(field_name)
-		calculators.collect do |calculator|
-			calculator.field_dependencies.include?(field_name)
-		end
-	end
+	def add_validator(id, validator)
+    @validators[id] = validator unless @validators.include?(id)
+  end
 
-	def has_dependent_calculators?(field_name)
-		!get_dependent_calculators(field_name).empty?
-	end
+  def get_validators(field_id)
+    get_registrations_in_hash(field_id, @validators)
+  end
 
-	def add_validator(validator)
-		#Store as Field@Sheet => { calculators => [calcs], validator => valid }
+  def has_validators?(field_id)
+    !get_validators(field_id).empty?
+  end
 
-		@validators[SheetService.instance.active_sheet]<<validator
+  def register_for_field(id, field_id)
+    (@registrations[field_id]<<id).uniq!
+  end
+
+	def generate_code_id
+		SecureRandom.uuid
 	end
 
 	private
 
 	def initialize
-		@calculators = Hash.new do |hash, key| hash[key] = [] end
-		@validators = Hash.new do |hash, key| hash[key] = [] end
-	end
+		@calculators = {}
+		@validators = {}
+    @registrations = Hash.new do |hash, key| hash[key] = [] end
+  end
 
-	def create_validators(user_code_def_hash)
-		user_code_def_hash[Constants::VALIDATOR_LIST].each do |validator_hash|
-
-		end
-	end
-
-	def create_calculators(user_code_def_hash)
-		calculators = []
-
-		user_code_def_hash[Constants::CALCULATOR_LIST].each do |calculator_hash|
-
-		end
-
-		calculators
-	end
+  def get_registrations_in_hash(field_id, hash)
+    @registrations[field_id].map do |id|
+      hash[id]
+    end.compact
+  end
 end

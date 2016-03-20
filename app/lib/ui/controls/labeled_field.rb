@@ -4,7 +4,7 @@
 
 require 'tk'
 require_relative 'field'
-require_relative '../../data/definition_constants'
+require_relative '../../data/constants'
 
 class LabeledField < Field
 	def initialize(field_type, label_text, initial_value, options_hash)

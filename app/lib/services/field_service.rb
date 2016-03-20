@@ -19,12 +19,11 @@ class FieldService
       yield Notification.create_error("Field not created, 'Type' is required.") if block_given?
     end
 
-    field = Field.new(field_type, field_def_hash[FIELD_VALUE], field_def_hash)
+		if field_name.nil?
+			yield Notification.create_error("Field not created, 'Name' is required.") if block_given?
+		end
 
-    if field_name.nil?
-      yield Notification.create_error("Field not added to Sheet, 'Name' is required.") if block_given?
-    end
-
+		field = Field.new(field_name, field_type, field_def_hash[FIELD_VALUE], field_def_hash)
     field_id = SecureRandom.uuid
 
     add_field(field_id, field) unless field_type.nil? || field_name.nil?
@@ -55,7 +54,12 @@ class FieldService
 	def get_fields_for_sheet(sheet_id)
     field_ids = SheetService.instance.get_sheet_controls(sheet_id)
     field_ids.inject([]){ |fields_for_sheet, field_id| fields_for_sheet<<@fields[field_id] }.compact
-	end
+  end
+
+  def get_field_map_for_sheet(sheet_id)
+    field_ids = SheetService.instance.get_sheet_controls(sheet_id)
+    field_ids.inject({}){ |field_map, field_id| field_map.merge({ @fields[field_id].name => field_id }) }
+  end
 
 	def get_unvalidated_fields
 		get_fields_for_sheet.collect{ |field| !field.validated? }

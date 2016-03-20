@@ -32,8 +32,7 @@ OptionParser.new do |opt|
 end.parse!
 
 notification = Notification.new
-config_translator = ConfigurationFileTranslator.new(config_file)
-config = config_translator.read_config_with_default(DEFAULT_CONFIG, &Notification.aggregator(notification))
+config = ConfigurationFileTranslator.read_config_with_default(config_file, DEFAULT_CONFIG, &Notification.aggregator(notification))
 
 $stderr.puts notification.format_messages if notification.has_errors?
 notification.clear_errors
@@ -57,5 +56,5 @@ config.repositories.each{|source|
 window = SheetwiseWindow.new(config.window_width, config.window_height, repository_manager)
 window.show
 
-config_translator.write_config(config, &Notification.aggregator(notification))
+ConfigurationFileTranslator.write_config(config, config_file, &Notification.aggregator(notification))
 $stderr.puts notification.format_messages if notification.has_errors?

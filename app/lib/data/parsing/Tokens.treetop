@@ -1,0 +1,66 @@
+# Tokens.treetop
+#
+# Author::	Kyle Mullins
+
+grammar Tokens
+	rule integer
+		('+' / '-')? [0-9]+
+	end
+
+	rule float
+		integer '.' [0-9]+
+	end
+
+	rule string
+		('"' ("\"" / !'"' .)* '"' / "'" ('\'' / !"'" .)* "'")
+	end
+
+	rule identifier
+		!keyword [a-zA-Z_] [0-9a-zA-Z_]*
+	end
+
+	rule literal
+		float / integer / string / boolean
+	end
+
+	rule boolean
+		true_kw / false_kw
+	end
+
+	rule value
+		literal / identifier
+	end
+
+	rule ws
+		[ \t]+
+	end
+
+	rule nl
+		("\r\n" / "\n")+
+	end
+
+	rule any_ws
+		ws / nl
+	end
+
+	#Keywords
+	rule keyword
+		true_kw / false_kw / nil_kw / done_kw / end_kw / validate_kw / calculate_kw / with_kw /
+		if_kw / elsif_kw / else_kw / end_kw / unless_kw / var_kw
+	end
+
+	rule true_kw		'true' end
+	rule false_kw		'false' end
+	rule nil_kw			'nil' end
+	rule done_kw		'done' end
+	rule end_kw			'end' end
+	rule validate_kw	'validate' end
+	rule calculate_kw	'calculate' end
+	rule with_kw		'with' end
+	rule if_kw			'if' end
+	rule elsif_kw		'elsif' end
+	rule else_kw		'else' end
+	rule end_kw			'end' end
+	rule unless_kw		'unless' end
+	rule var_kw			'var' end
+end

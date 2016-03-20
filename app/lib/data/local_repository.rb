@@ -5,7 +5,8 @@
 require 'pathname'
 require_relative 'definition_listing'
 require_relative 'definition_translator'
-require_relative 'definition_constants'
+require_relative 'constants'
+require_relative 'definition'
 require_relative '../services/configuration_service'
 
 class LocalRepository
@@ -15,13 +16,13 @@ class LocalRepository
     @definition_dir = Pathname.new(definition_dir) #assert definition_dir.directory?
     @definitions = DefinitionListing.new
     @definition_cache = Hash.new do |cache, def_name|
-      file_contents = read_definition(@definitions[def_name])
+      definition = read_definition(@definitions[def_name])
 
-      if file_contents == NOT_FOUND
+      if definition == NOT_FOUND
         return NOT_FOUND
       end
 
-      cache[def_name] = file_contents unless file_contents == NOT_FOUND
+      cache[def_name] = definition
     end
 
     populate_definitions
@@ -60,9 +61,12 @@ class LocalRepository
     scan_definition_dir
   end
 
+  def refresh_cache
+    @definition_cache.clear
+  end
+
   private
 
-  MAX_CACHE_SIZE = 3
   NOT_FOUND = :def_not_found
   DEFINITION_EXT = '.sdef'
   DEFINITION_LISTING = '.deflist'
@@ -73,9 +77,10 @@ class LocalRepository
 
   def read_definition(definition_path)
     full_path = full_repo_path(definition_path)
-    return full_path.read if full_path.readable?
 
-    :def_not_found
+    return Definition.new(full_path.read) if full_path.readable?
+
+    NOT_FOUND
   end
 
   def populate_definitions
@@ -94,15 +99,15 @@ class LocalRepository
     dir_scan_pattern = def_dir.join('*')
 
     Pathname.glob(def_scan_pattern).select(&:file?).select(&:readable?).each do |file|
-      definition_hash = DefinitionTranslator.parse_definition(read_definition(file))
-      def_name = definition_hash[Constants::NAME]
+      definition = DefinitionTranslator.parse_definition(read_definition(file))
+      def_name = definition.structure[Constants::NAME]
 
       @definitions[def_name] = file.to_s unless def_name.nil? || @definitions.contains?(def_name)
     end
 
     unless nest_level >= ConfigurationService.instance.max_directory_nesting
       Pathname.glob(dir_scan_pattern).select(&:directory?).select(&:readable?).each do |dir|
-        unless ['.', '..'].include?(dir.to_s)
+        unless %w(. ..).include?(dir.to_s)
           scan_definition_dir(dir, nest_level + 1)
         end
       end

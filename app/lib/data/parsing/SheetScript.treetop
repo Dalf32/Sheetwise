@@ -1,0 +1,104 @@
+# SheetScript.treetop
+#
+# Author::	Kyle Mullins
+
+grammar SheetScript
+	include Arithmetic
+	include BooleanLogic
+
+	rule script
+		(comment / validator_def / calculator_def / any_ws)*
+	end
+
+	rule statement
+		(ws? (var_def / assignment / method_call / conditional / comment) any_ws / any_ws)
+	end
+
+	rule list_sep
+		',' any_ws?
+	end
+
+	rule identifier_list
+		identifier (list_sep identifier)*
+	end
+
+	rule value_list
+		value (list_sep value)*
+	end
+
+	rule def_header
+		identifier_list (any_ws with_stmnt)? any_ws '->'
+	end
+
+	rule def_body
+		statement* done_kw
+	end
+
+	rule validator_def
+		validate_kw ws def_header any_ws def_body
+	end
+
+	rule calculator_def
+		calculate_kw ws def_header any_ws def_body
+	end
+
+	rule with_stmnt
+		with_kw ws identifier_list
+	end
+
+	rule conditional
+		if_stmnt / unless_stmnt
+	end
+
+	rule condition_line
+		(ws boolean_expr / ws? '(' any_ws? boolean_expr any_ws? ')') ws? nl
+	end
+
+	rule if_stmnt
+		if_kw condition_line
+		(!elsif_stmnt !else_stmnt statement)*
+		(!else_stmnt elsif_stmnt)*
+		(else_stmnt)?
+		end_kw
+	end
+
+	rule elsif_stmnt
+		elsif_kw condition_line
+		statement*
+	end
+
+	rule else_stmnt
+		else_kw nl
+		statement*
+	end
+
+	rule unless_stmnt
+		unless_kw condition_line
+		statement*
+		end_kw
+	end
+
+	rule comment
+		single_line_comment / multi_line_comment
+	end
+
+	rule single_line_comment
+		'#' (!nl .)* nl
+	end
+
+	rule multi_line_comment
+		'/*' (!'*/' (nl / .))* '*/'
+	end
+
+	rule var_def
+		var_kw ws (assignment / identifier_list)
+	end
+
+	rule assignment
+		identifier ws '=' any_ws? (boolean_expr / expression / value)
+	end
+
+	rule method_call
+		identifier '(' any_ws? value_list? any_ws? ')'
+	end
+end

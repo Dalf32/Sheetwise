@@ -3,7 +3,7 @@
 # Author::  Kyle Mullins
 
 require 'tk'
-require_relative '../../data/definition_constants'
+require_relative '../../data/constants'
 
 class FieldTable
 	include Constants::Fields::Table

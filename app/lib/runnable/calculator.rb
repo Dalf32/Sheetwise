@@ -3,22 +3,30 @@
 # Author::  Kyle Mullins
 
 require_relative 'user_code'
-require_relative '../services/field_service'
+require_relative 'calculator_context'
 
-class Calculator < UserCode
-	attr_reader :field_dependencies
+class Calculator
+  include UserCode
 
-	def initialize(code_block, field_dependencies)
-		super(code_block)
+  def initialize(field_id_map, *fields)
+    super
+  end
 
-		@field_dependencies = field_dependencies
-	end
+  def register
+    UserCodeService.instance.add_calculator(@id, self)
+  end
 
-	protected
+  def with(*fields, &block)
+    #generate_getters
+    #register to calculate
+  end
 
-	def get_run_params
-		@field_dependencies.inject({}){|params, field_name|
-			params[field_name] = FieldService.instance.get_field(field_name)
-		}
-	end
+  def run(field_id)
+    context = CalculatorContext.new
+
+    $SAFE = 1
+    context.instance_eval(&@code_block)
+  rescue RuntimeError => e
+    $stderr << e
+  end
 end

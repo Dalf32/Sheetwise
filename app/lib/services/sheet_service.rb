@@ -6,7 +6,7 @@ require 'singleton'
 require 'securerandom'
 require_relative 'field_service'
 require_relative 'user_code_service'
-require_relative '../data/definition_constants'
+require_relative '../data/constants'
 require_relative '../ui/sheet'
 require_relative '../ui/controls/sheet_section'
 require_relative '../utilities/notification'
@@ -41,7 +41,11 @@ class SheetService
 
 		sheet.set_controls(root_section)
 		sheet
-	end
+  end
+
+  def create_sheet_from_new
+
+  end
 
 	def add_sheet(sheet)
 		@sheets[sheet.id] = sheet

@@ -34,6 +34,6 @@ class ConfigurationService
   private
 
   def is_setter?(method)
-    !!(method =~ /^set|([^=+]=)$/)
+    !!(method =~ /^((set_\w+)|(\w+=))$/)
   end
 end

@@ -1,0 +1,57 @@
+# BooleanLogic.treetop
+#
+# Author::	Kyle Mullins
+
+grammar BooleanLogic
+	include Tokens
+
+	rule boolean_expr
+		simple_bool_expr / nested_bool_expr / comp_expr / identifier
+	end
+
+	rule nested_bool_expr
+		(unary_bool_op '(' any_ws? boolean_expr any_ws? ')') /
+		('(' any_ws? boolean_expr any_ws? ')' binary_bool_op '(' any_ws? boolean_expr any_ws? ')') /
+		('(' any_ws? boolean_expr any_ws? ')' binary_bool_op bool_operand) /
+		(bool_operand binary_bool_op '(' any_ws? boolean_expr any_ws? ')')
+	end
+
+	rule simple_bool_expr
+		(unary_bool_op bool_operand) / (bool_operand binary_bool_op bool_operand)
+	end
+
+	rule bool_operand
+		boolean / identifier
+	end
+
+	rule unary_bool_op
+		'!'
+	end
+
+	rule binary_bool_op
+		any_ws? ('&&' / '||' / '==' / '!=') any_ws?
+	end
+
+	rule comp_expr
+		simple_comp_expr / complex_comp_expr
+	end
+
+	#I don't think this is right...
+	rule complex_comp_expr
+		('(' any_ws? expression any_ws? ')' comp_op '(' any_ws? expression any_ws? ')') /
+		('(' any_ws? expression any_ws? ')' comp_op comp_operand) /
+		(comp_operand comp_op '(' any_ws? expression any_ws? ')')
+	end
+
+	rule simple_comp_expr
+		comp_operand comp_op comp_operand
+	end
+
+	rule comp_operand
+		value
+	end
+
+	rule comp_op
+		any_ws? ('<' / '<=' / '>' / '>=' / '==' / '!=') any_ws?
+	end
+end

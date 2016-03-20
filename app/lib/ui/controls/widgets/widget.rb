@@ -2,7 +2,7 @@
 #
 # Author::  Kyle Mullins
 
-require_relative '../../../data/definition_constants'
+require_relative '../../../data/constants'
 
 module Widget
   attr_reader :default_value
