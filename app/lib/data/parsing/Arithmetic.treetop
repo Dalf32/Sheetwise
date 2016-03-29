@@ -6,7 +6,7 @@ grammar Arithmetic
 	include Tokens
 
 	rule expression
-		simple_expr / nested_expr / identifier
+		(nested_expr / simple_expr / identifier) <ExpressionNode>
 	end
 
 	rule nested_expr
@@ -21,7 +21,7 @@ grammar Arithmetic
 	end
 
 	rule operand
-		identifier / integer / float
+		identifier / float / integer
 	end
 
 	rule unary_op

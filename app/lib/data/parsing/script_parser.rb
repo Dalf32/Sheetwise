@@ -7,6 +7,9 @@ require_relative 'Tokens'
 require_relative 'Arithmetic'
 require_relative 'BooleanLogic'
 require_relative 'SheetScript'
+require_relative 'token_nodes'
+require_relative 'arithmetic_nodes'
+require_relative 'boolean_logic_nodes'
 
 class ScriptParser
   def initialize(input_text, parser = SheetScriptParser.new)

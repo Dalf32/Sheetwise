@@ -3,10 +3,10 @@
 # Author::	Kyle Mullins
 
 grammar BooleanLogic
-	include Tokens
+	include Arithmetic
 
 	rule boolean_expr
-		simple_bool_expr / nested_bool_expr / comp_expr / identifier
+		(nested_bool_expr / simple_bool_expr / comp_expr) <BooleanExpressionNode> / identifier
 	end
 
 	rule nested_bool_expr
@@ -33,10 +33,9 @@ grammar BooleanLogic
 	end
 
 	rule comp_expr
-		simple_comp_expr / complex_comp_expr
+		complex_comp_expr / simple_comp_expr
 	end
 
-	#I don't think this is right...
 	rule complex_comp_expr
 		('(' any_ws? expression any_ws? ')' comp_op '(' any_ws? expression any_ws? ')') /
 		('(' any_ws? expression any_ws? ')' comp_op comp_operand) /
@@ -52,6 +51,6 @@ grammar BooleanLogic
 	end
 
 	rule comp_op
-		any_ws? ('<' / '<=' / '>' / '>=' / '==' / '!=') any_ws?
+		any_ws? ('<=' / '<' / '>=' / '>' / '==' / '!=') any_ws?
 	end
 end

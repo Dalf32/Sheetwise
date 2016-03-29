@@ -3,6 +3,14 @@
 # Author::	Kyle Mullins
 
 grammar Tokens
+	rule all_tokens_test
+		value / any_ws
+	end
+
+	rule literal
+		(float / integer / string / boolean) <LiteralNode>
+	end
+
 	rule integer
 		('+' / '-')? [0-9]+
 	end
@@ -12,15 +20,11 @@ grammar Tokens
 	end
 
 	rule string
-		('"' ("\"" / !'"' .)* '"' / "'" ('\'' / !"'" .)* "'")
+		('"' (!'"' .)* '"') / ("'" (!"'" .)* "'")
 	end
 
 	rule identifier
-		!keyword [a-zA-Z_] [0-9a-zA-Z_]*
-	end
-
-	rule literal
-		float / integer / string / boolean
+		!keyword [a-zA-Z_] [0-9a-zA-Z_]* <IdentifierNode>
 	end
 
 	rule boolean
@@ -40,7 +44,7 @@ grammar Tokens
 	end
 
 	rule any_ws
-		ws / nl
+		(ws / nl) <WhitespaceNode>
 	end
 
 	#Keywords
